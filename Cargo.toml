@@ -1,2 +1,2 @@
 [workspace]
-members = ["programs/crowdfund", "programs/treasury", "programs/nftminter"]
+members = ["programs/manager", "programs/treasury", "programs/nftminter"]
