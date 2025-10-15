@@ -4,11 +4,13 @@ use solana_sdk::{
     signature::{Keypair, Signer},
     transaction::Transaction,
 };
+use tokio::time::{sleep, Duration};
 
+mod config;
 mod helpers;
 mod instructions;
 
-fn run_setup_flow(
+fn run(
     client: &RpcClient,
     payer: &Keypair,
     manager: &Pubkey,
@@ -42,13 +44,19 @@ fn run_setup_flow(
 
 #[tokio::main]
 async fn main() {
-    let client = helpers::connect_client();
+    let config = config::Config::load_config();
+    let client = helpers::connect_client(config.rpc_url);
 
-    let payer = Keypair::new();
-    helpers::fund_payer(&client, &payer, 1_000_000_000);
+    let payer = helpers::new_funded_payer(&client);
 
-    let manager = helpers::deploy_program(&client, &payer, "target/deploy/manager.so");
-    let treasury = helpers::deploy_program(&client, &payer, "target/deploy/treasury.so");
-    let nftminter = helpers::deploy_program(&client, &payer, "target/deploy/nftminter.so");
-    run_setup_flow(&client, &payer, &manager, &treasury, &nftminter);
+    sleep(Duration::from_secs(2)).await;
+    println!("Balance: {}", client.get_balance(&payer.pubkey()).unwrap());
+
+    run(
+        &client,
+        &payer,
+        &config.manager_program_id,
+        &config.nftminter_program_id,
+        &config.treasury_program_id,
+    );
 }

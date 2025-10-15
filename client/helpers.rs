@@ -1,13 +1,11 @@
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
     commitment_config::CommitmentConfig,
-    pubkey::Pubkey,
     signature::{Keypair, Signer},
 };
 
-pub fn connect_client() -> RpcClient {
-    let rpc_url = String::from("http://localhost:8899");
-    RpcClient::new_with_commitment(rpc_url, CommitmentConfig::confirmed())
+pub fn connect_client(url: String) -> RpcClient {
+    RpcClient::new_with_commitment(url, CommitmentConfig::confirmed())
 }
 
 pub fn fund_payer(client: &RpcClient, payer: &Keypair, lamports: u64) {
@@ -22,6 +20,8 @@ pub fn fund_payer(client: &RpcClient, payer: &Keypair, lamports: u64) {
     println!("Airdrop complete for {}", payer.pubkey());
 }
 
-pub fn deploy_program(_client: &RpcClient, _payer: &Keypair, _path: &str) -> Pubkey {
-    Keypair::new().pubkey()
+pub fn new_funded_payer(client: &RpcClient) -> Keypair {
+    let payer = Keypair::new();
+    fund_payer(&client, &payer, 1_000_000_000);
+    payer
 }
