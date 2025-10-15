@@ -24,7 +24,7 @@ pub fn create_vault_ix(
             AccountMeta::new(vault, false),
             AccountMeta::new_readonly(solana_program::system_program::ID, false),
         ],
-        data: TreasuryInstruction::CreateVault.try_to_vec().unwrap(),
+        data: borsh::to_vec(&TreasuryInstruction::CreateVault).unwrap(),
     }
 }
 
@@ -43,8 +43,6 @@ pub fn deposit_funds_ix(
             AccountMeta::new_readonly(campaign, false),
             AccountMeta::new_readonly(solana_program::system_program::ID, false),
         ],
-        data: TreasuryInstruction::DepositFunds { amount }
-            .try_to_vec()
-            .unwrap(),
+        data: borsh::to_vec(&TreasuryInstruction::DepositFunds { amount }).unwrap(),
     }
 }
