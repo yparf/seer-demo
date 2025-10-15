@@ -12,6 +12,7 @@ use solana_program::{
     system_instruction,
     sysvar::Sysvar,
 };
+mod state;
 
 entrypoint!(process_instruction);
 
@@ -33,13 +34,6 @@ pub fn process_instruction(
     }
 }
 
-#[repr(C)]
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub struct NftConfig {
-    pub admin: Pubkey, // Who can mint NFTs
-    pub bump_seed: u8, // PDA bump
-}
-
 fn initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
 
@@ -59,7 +53,7 @@ fn initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
     }
 
     let rent = Rent::get()?;
-    let size = std::mem::size_of::<NftConfig>();
+    let size = std::mem::size_of::<state::NftConfig>();
     let lamports = rent.minimum_balance(size);
 
     let create_ix = system_instruction::create_account(
@@ -76,7 +70,7 @@ fn initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
         &[&[b"nft_config", &[bump]]],
     )?;
 
-    let config_data = NftConfig {
+    let config_data = state::NftConfig {
         admin: *admin.key,
         bump_seed: bump,
     };
@@ -104,7 +98,7 @@ fn mint_contributor_badge(program_id: &Pubkey, accounts: &[AccountInfo]) -> Prog
     }
 
     // Validate config
-    let config_data = NftConfig::try_from_slice(&config_pda.data.borrow())?;
+    let config_data = state::NftConfig::try_from_slice(&config_pda.data.borrow())?;
     if config_data.admin != *admin.key {
         msg!("Unauthorized admin");
         return Err(ProgramError::IllegalOwner);
