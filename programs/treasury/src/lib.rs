@@ -29,14 +29,10 @@ pub fn process_instruction(
 ) -> ProgramResult {
     let instruction = Instruction::try_from_slice(instruction_data)
         .map_err(|_| ProgramError::InvalidInstructionData)?;
-
     match instruction {
-        Instruction::CreateVault => process_create_vault(program_id, accounts)?,
-        Instruction::DepositFunds { amount } => {
-            process_deposit_funds(program_id, accounts, amount)?
-        }
-    };
-    Ok(())
+        Instruction::CreateVault => process_create_vault(program_id, accounts),
+        Instruction::DepositFunds { amount } => process_deposit_funds(program_id, accounts, amount),
+    }
 }
 
 fn process_create_vault(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
