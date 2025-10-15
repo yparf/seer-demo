@@ -12,8 +12,15 @@ use solana_program::{
     system_instruction,
     sysvar::rent::Rent,
 };
+mod state;
 
 entrypoint!(process_instruction);
+
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub enum Instruction {
+    CreateVault,
+    DepositFunds { amount: u64 },
+}
 
 pub fn process_instruction(
     program_id: &Pubkey,
@@ -30,21 +37,6 @@ pub fn process_instruction(
         }
     };
     Ok(())
-}
-
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub enum Instruction {
-    CreateVault,
-    DepositFunds { amount: u64 },
-}
-
-// Represents a vault tied to a specific campaign
-#[repr(C)]
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub struct Vault {
-    pub campaign: Pubkey, // Campaign this vault belongs to
-    pub balance: u64,     // Current lamport balance
-    pub bump_seed: u8,    // PDA bump
 }
 
 fn process_create_vault(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
@@ -66,7 +58,7 @@ fn process_create_vault(program_id: &Pubkey, accounts: &[AccountInfo]) -> Progra
     }
 
     // Allocate space for Vault struct
-    let vault_size = std::mem::size_of::<Vault>();
+    let vault_size = std::mem::size_of::<state::Vault>();
 
     // Create account instruction
     let create_ix = system_instruction::create_account(
@@ -85,7 +77,7 @@ fn process_create_vault(program_id: &Pubkey, accounts: &[AccountInfo]) -> Progra
     )?;
 
     // Initialize vault data
-    let vault_data = Vault {
+    let vault_data = state::Vault {
         campaign: *campaign_account.key,
         balance: 0,
         bump_seed: bump,
@@ -142,7 +134,7 @@ fn process_deposit_funds(
     )?;
 
     // Update vault balance in account data
-    let mut vault_data = Vault::try_from_slice(&vault_account.data.borrow())?;
+    let mut vault_data = state::Vault::try_from_slice(&vault_account.data.borrow())?;
 
     vault_data.balance = vault_data
         .balance
