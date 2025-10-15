@@ -1,6 +1,8 @@
+#![allow(unexpected_cfgs)]
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
+    entrypoint,
     entrypoint::ProgramResult,
     msg,
     program::{invoke, invoke_signed},
@@ -10,6 +12,14 @@ use solana_program::{
     system_instruction,
     sysvar::Sysvar,
 };
+
+entrypoint!(process_instruction);
+
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub enum NftMinterInstruction {
+    InitializeConfig,
+    MintContributorBadge,
+}
 
 pub fn process_instruction(
     program_id: &Pubkey,
@@ -21,12 +31,6 @@ pub fn process_instruction(
         NftMinterInstruction::InitializeConfig => initialize_config(program_id, accounts),
         NftMinterInstruction::MintContributorBadge => mint_contributor_badge(program_id, accounts),
     }
-}
-
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub enum NftMinterInstruction {
-    InitializeConfig,
-    MintContributorBadge,
 }
 
 #[repr(C)]
