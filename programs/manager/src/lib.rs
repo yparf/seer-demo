@@ -10,7 +10,14 @@ use solana_program::{
 };
 
 mod nft_instruction;
+mod state;
 mod treasury_instruction;
+
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub enum Instruction {
+    CreateCampaign { goal: u64 },
+    Contribute { amount: u64 },
+}
 
 pub fn process_instruction(
     program_id: &Pubkey,
@@ -23,22 +30,6 @@ pub fn process_instruction(
         Instruction::CreateCampaign { goal } => create_campaign(program_id, accounts, goal),
         Instruction::Contribute { amount } => contribute(program_id, accounts, amount),
     }
-}
-
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub enum Instruction {
-    CreateCampaign { goal: u64 },
-    Contribute { amount: u64 },
-}
-
-#[repr(C)]
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub struct Campaign {
-    pub owner: Pubkey,
-    pub goal: u64,
-    pub total_raised: u64,
-    pub vault: Pubkey,
-    pub is_complete: bool,
 }
 
 fn create_campaign(program_id: &Pubkey, accounts: &[AccountInfo], goal: u64) -> ProgramResult {
@@ -55,7 +46,7 @@ fn create_campaign(program_id: &Pubkey, accounts: &[AccountInfo], goal: u64) -> 
     }
 
     // Create Campaign Account
-    let campaign_size = std::mem::size_of::<Campaign>();
+    let campaign_size = std::mem::size_of::<state::Campaign>();
     let rent_lamports = solana_program::rent::Rent::default().minimum_balance(campaign_size);
 
     let create_ix = system_instruction::create_account(
@@ -95,7 +86,7 @@ fn create_campaign(program_id: &Pubkey, accounts: &[AccountInfo], goal: u64) -> 
     )?;
 
     // Initialize Campaign
-    let campaign = Campaign {
+    let campaign = state::Campaign {
         owner: *creator.key,
         goal,
         total_raised: 0,
@@ -180,7 +171,7 @@ fn contribute(_: &Pubkey, accounts: &[AccountInfo], amount: u64) -> ProgramResul
     )?;
 
     // Update campaign state
-    let mut campaign = Campaign::try_from_slice(&campaign_account.data.borrow())?;
+    let mut campaign = state::Campaign::try_from_slice(&campaign_account.data.borrow())?;
     campaign.total_raised += amount;
     campaign.serialize(&mut &mut campaign_account.data.borrow_mut()[..])?;
 
