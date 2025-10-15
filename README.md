@@ -1,5 +1,6 @@
 # Crowdfunding
 
+### Use Case Overview
 ```mermaid
 sequenceDiagram
     autonumber
@@ -41,3 +42,9 @@ sequenceDiagram
     Manager->>Treasury: create_vault(campaign_vault_pda)
     Manager-->>Admin: *campaign created with vault*
 ```
+
+### How to Execute
+1. `solana-test-validator`
+2. `./build.sh`
+3. `. ./deploy.sh`
+4. `cargo run --bin client`
