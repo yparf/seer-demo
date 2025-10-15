@@ -35,8 +35,6 @@ pub fn mint_badge_ix(
             AccountMeta::new_readonly(system_program, false),
             AccountMeta::new_readonly(rent_sysvar, false),
         ],
-        data: NftMinterInstruction::MintContributorBadge
-            .try_to_vec()
-            .unwrap(),
+        data: borsh::to_vec(&NftMinterInstruction::MintContributorBadge).unwrap(),
     }
 }
