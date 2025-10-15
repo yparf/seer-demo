@@ -1,6 +1,8 @@
+#![allow(unexpected_cfgs)]
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
+    entrypoint,
     entrypoint::ProgramResult,
     msg,
     program::invoke,
@@ -12,6 +14,8 @@ use solana_program::{
 mod nft_instruction;
 mod state;
 mod treasury_instruction;
+
+entrypoint!(process_instruction);
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub enum Instruction {
