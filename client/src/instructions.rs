@@ -1,18 +1,9 @@
-use borsh::BorshSerialize;
+use manager::Instruction as ManagerInstruction;
+use nftminter::NftMinterInstruction;
 use solana_program::{
     instruction::{AccountMeta, Instruction},
     pubkey::Pubkey,
 };
-
-#[derive(BorshSerialize)]
-pub enum NftMinterInstruction {
-    InitializeConfig,
-}
-
-#[derive(BorshSerialize)]
-pub enum ManagerInstruction {
-    CreateCampaign { goal: u64 },
-}
 
 pub fn nftminter_initialize_config(nft_program_id: &Pubkey, payer: &Pubkey) -> Instruction {
     let (nft_config_pda, _) = Pubkey::find_program_address(&[b"nft_config"], nft_program_id);
