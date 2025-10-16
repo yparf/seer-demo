@@ -33,7 +33,10 @@ fn run(
 
     println!("Sending setup flow transaction...");
     match client.send_and_confirm_transaction(&tx) {
-        Ok(sig) => println!("Setup flow complete: {}", sig),
+        Ok(sig) => {
+            println!("Setup flow complete: {}", sig);
+            println!("Campaign Account: {}", &campaign_account.pubkey());
+        }
         Err(err) => eprintln!("Setup flow failed: {:?}", err),
     }
 }
