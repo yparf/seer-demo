@@ -47,4 +47,6 @@ sequenceDiagram
 1. `solana-test-validator`
 2. `./build.sh`
 3. `. ./deploy.sh`
-4. `cargo run --bin client`
+4. `cargo run --bin setup_flow.rs`
+5. Copy the `Campaign Account` value from the output
+6. `cargo run --bin user_flow.rs <campaign_account>`
