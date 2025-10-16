@@ -1,3 +1,4 @@
+use client::{config, helpers, instructions};
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
     pubkey::Pubkey,
@@ -5,10 +6,6 @@ use solana_sdk::{
     transaction::Transaction,
 };
 use tokio::time::{sleep, Duration};
-
-mod config;
-mod helpers;
-mod instructions;
 
 fn run(
     client: &RpcClient,
