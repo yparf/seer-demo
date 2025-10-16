@@ -1,6 +1,8 @@
 use solana_sdk::pubkey::Pubkey;
 use std::env;
 
+pub const CAMPAIGN_ACCOUNT_ENV: &str = "CAMPAIGN_ACCOUNT";
+
 #[derive(Debug)]
 pub struct Config {
     pub manager_program_id: Pubkey,
