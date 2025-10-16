@@ -5,7 +5,6 @@ use solana_sdk::{
     signature::{Keypair, Signer},
     transaction::Transaction,
 };
-use tokio::time::{sleep, Duration};
 
 fn run(
     client: &RpcClient,
@@ -44,10 +43,7 @@ async fn main() {
     let config = config::Config::load_config();
     let client = helpers::connect_client(config.rpc_url);
 
-    let payer = helpers::new_funded_payer(&client);
-
-    sleep(Duration::from_secs(2)).await;
-    println!("Balance: {}", client.get_balance(&payer.pubkey()).unwrap());
+    let payer = helpers::new_funded_payer(&client).await;
 
     run(
         &client,
