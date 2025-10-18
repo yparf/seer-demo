@@ -5,3 +5,6 @@ members = [
     "programs/nftminter",
     "client",
 ]
+
+[profile.release]
+debug = true
