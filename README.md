@@ -11,7 +11,7 @@ The project includes three Solana programs - **Manager**, **Treasury**, and **NF
 
 An intentional bug is introduced in the user flow to showcase how **Seer** can help identify and debug it.
 
-## Crowdfunding Flow
+### Crowdfunding Flow
 
 ```mermaid
 sequenceDiagram
@@ -31,7 +31,7 @@ sequenceDiagram
     Manager-->>User: *contribution complete*
 ```
 
-
+### Admin & Initialization Flow
 ```mermaid
 sequenceDiagram
     autonumber
