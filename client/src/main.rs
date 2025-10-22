@@ -9,10 +9,7 @@ mod utils;
 
 #[tokio::main]
 async fn main() {
-    let project_root: PathBuf = env::var("PROJECT_ROOT")
-        .expect("PROJECT_ROOT environment variable not set")
-        .parse()
-        .expect("Invalid PROJECT_ROOT");
+    let project_root = env::current_dir().unwrap();
 
     let config = config::Config::new(project_root.clone());
 
