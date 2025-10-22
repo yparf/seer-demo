@@ -44,9 +44,6 @@ sequenceDiagram
 ```
 
 ### How to Execute
-1. `solana-test-validator`
-2. `./build.sh`
-3. `. ./deploy.sh`
-4. `cargo run --bin setup_flow`
-5. Copy the `Campaign Account` value from the output
-6. `cargo run --bin user_flow <campaign_account>`
+1. `./build.sh` - to build solana programs
+2. `RUSTFLAGS="-A warnings" cargo build --package client` - to build a client
+3. `target/debug/client` - to execute the client
