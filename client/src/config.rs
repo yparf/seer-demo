@@ -1,40 +1,45 @@
-use solana_sdk::pubkey::Pubkey;
-use std::env;
-
-pub const CAMPAIGN_ACCOUNT_ENV: &str = "CAMPAIGN_ACCOUNT";
+use solana_keypair::{read_keypair_file, Keypair, Pubkey, Signer};
+use std::{collections::HashMap, path::PathBuf};
 
 #[derive(Debug)]
 pub struct Config {
+    pub sources: HashMap<Pubkey, PathBuf>,
     pub manager_program_id: Pubkey,
     pub treasury_program_id: Pubkey,
     pub nftminter_program_id: Pubkey,
-    pub rpc_url: String,
+    pub campaign_keypair: Keypair,
+    pub mint_keypair: Keypair,
 }
 
 impl Config {
-    pub fn load_config() -> Self {
-        let manager_program_id = env::var("MANAGER_PROGRAM_ID")
-            .expect("MANAGER_PROGRAM_ID environment variable not set")
-            .parse()
-            .expect("Invalid MANAGER_PROGRAM_ID");
+    pub fn new(project_root: PathBuf) -> Self {
+        let deploy_dir = project_root.join("target/deploy");
 
-        let treasury_program_id = env::var("TREASURY_PROGRAM_ID")
-            .expect("TREASURY_PROGRAM_ID environment variable not set")
-            .parse()
-            .expect("Invalid TREASURY_PROGRAM_ID");
+        let manager_pk = read_keypair_file(deploy_dir.join("manager-keypair.json"))
+            .unwrap()
+            .pubkey();
+        let treasury_pk = read_keypair_file(deploy_dir.join("treasury-keypair.json"))
+            .unwrap()
+            .pubkey();
+        let nftminter_pk = read_keypair_file(deploy_dir.join("nftminter-keypair.json"))
+            .unwrap()
+            .pubkey();
 
-        let nftminter_program_id = env::var("NFTMINTER_PROGRAM_ID")
-            .expect("NFTMINTER_PROGRAM_ID environment variable not set")
-            .parse()
-            .expect("Invalid NFTMINTER_PROGRAM_ID");
-
-        let rpc_url = env::var("RPC_URL").unwrap_or_else(|_| "http://localhost:8899".to_string());
+        let manager_so = deploy_dir.join("manager.so").canonicalize().unwrap();
+        let treasury_so = deploy_dir.join("treasury.so").canonicalize().unwrap();
+        let nftminter_so = deploy_dir.join("nftminter.so").canonicalize().unwrap();
 
         Config {
-            manager_program_id,
-            treasury_program_id,
-            nftminter_program_id,
-            rpc_url,
+            sources: HashMap::from([
+                (manager_pk, manager_so),
+                (treasury_pk, treasury_so),
+                (nftminter_pk, nftminter_so),
+            ]),
+            manager_program_id: manager_pk,
+            treasury_program_id: treasury_pk,
+            nftminter_program_id: nftminter_pk,
+            campaign_keypair: Keypair::new(),
+            mint_keypair: Keypair::new(),
         }
     }
 }
