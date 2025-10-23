@@ -130,14 +130,15 @@ fn process_deposit_funds(
     )?;
 
     // Update vault balance in account data
-    let mut vault_data = state::Vault::try_from_slice(&vault_account.data.borrow())?;
+    let mut vault_account_data = vault_account.data.borrow_mut();
+    let mut vault_data = state::Vault::try_from_slice(&vault_account_data)?;
 
     vault_data.balance = vault_data
         .balance
         .checked_add(amount)
         .ok_or(ProgramError::InvalidInstructionData)?;
 
-    vault_data.serialize(&mut &mut vault_account.data.borrow_mut()[..])?;
+    vault_data.serialize(&mut &mut vault_account_data[..])?;
 
     msg!(
         "Deposit successful. New vault balance: {} lamports",
