@@ -59,6 +59,5 @@ sequenceDiagram
 There is a client that runs the admin and user flow in a single transaction.
 The admin flow instructions succeed, but the transaction **fails on the user flow** instructions - this failure is intentional for the demonstration purposes.
 
-1. `./build.sh` - to build solana programs
-2. `RUSTFLAGS="-A warnings" cargo build --package client` - to build a client
-3. `target/debug/client` - to execute the client
+1. `./build.sh` - to build solana programs and the client
+2. `target/debug/client` - to execute the client
