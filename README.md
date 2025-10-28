@@ -2,6 +2,9 @@
 
 This is a mock Solana project created to demonstrate how **Seer** can be used for troubleshooting unexpected errors in Solana programs.
 
+Part of the **Seer** submission for the **Colosseum Cypherpunk Hackathon**.
+For a project overview, see the main repository: [seer](https://github.com/VasilyGerrans/seer).
+
 ## Description
 
 The project includes three Solana programs - **Manager**, **Treasury**, and **NFTMinter** - implementing a simple crowdfunding use case:
@@ -55,9 +58,15 @@ sequenceDiagram
     Manager-->>Admin: *campaign created with vault*
 ```
 
-## How to Run
+## How to Run Project
+
 There is a client that runs the admin and user flow in a single transaction.
 The admin flow instructions succeed, but the transaction **fails on the user flow** instructions - this failure is intentional for the demonstration purposes.
 
 1. `./build.sh` - to build solana programs and the client
 2. `./run.sh` - to execute the client
+
+## How to Run Seer
+
+After running the project, use Seer to inspect the transaction execution.
+To launch the Seer UI, see the instructions in the [UI README](https://github.com/VasilyGerrans/seer-ui).
