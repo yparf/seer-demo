@@ -19,7 +19,7 @@ async fn main() {
     }
 
     seer::init(
-        config.sources,
+        config.dwarfs,
         Some(project_root.to_string_lossy().to_string()),
     );
 

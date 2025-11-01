@@ -4,6 +4,7 @@ use std::{collections::HashMap, path::PathBuf};
 #[derive(Debug)]
 pub struct Config {
     pub sources: HashMap<Pubkey, PathBuf>,
+    pub dwarfs: HashMap<Pubkey, PathBuf>,
     pub manager_program_id: Pubkey,
     pub treasury_program_id: Pubkey,
     pub nftminter_program_id: Pubkey,
@@ -29,11 +30,20 @@ impl Config {
         let treasury_so = deploy_dir.join("treasury.so").canonicalize().unwrap();
         let nftminter_so = deploy_dir.join("nftminter.so").canonicalize().unwrap();
 
+        let manager_debug = deploy_dir.join("manager.debug").canonicalize().unwrap();
+        let treasury_debug = deploy_dir.join("treasury.debug").canonicalize().unwrap();
+        let nftminter_debug = deploy_dir.join("nftminter.debug").canonicalize().unwrap();
+
         Config {
             sources: HashMap::from([
                 (manager_pk, manager_so),
                 (treasury_pk, treasury_so),
                 (nftminter_pk, nftminter_so),
+            ]),
+            dwarfs: HashMap::from([
+                (manager_pk, manager_debug),
+                (treasury_pk, treasury_debug),
+                (nftminter_pk, nftminter_debug),
             ]),
             manager_program_id: manager_pk,
             treasury_program_id: treasury_pk,
